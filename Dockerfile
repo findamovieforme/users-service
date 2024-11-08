@@ -1,21 +1,33 @@
-# Use the Golang image directly
-FROM golang:1.23-alpine
+# Stage 1: Build the Go app
+FROM golang:1.23-alpine AS builder
 
-# Set the Current Working Directory inside the container
+# Install any build dependencies (optional)
+RUN apk add --no-cache git
+
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Go Modules and dependencies files, and download them
+# Copy go.mod and go.sum and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the source code
 COPY . .
 
-# Build the Go app
+# Build the application
 RUN go build -o users-service main.go
+
+# Stage 2: Create a minimal image with just the binary
+FROM alpine:latest
+
+# Install certificates to allow HTTPS connections (important for many Go apps)
+RUN apk --no-cache add ca-certificates
+
+# Copy the built binary from the builder stage
+COPY --from=builder /app/users-service /app/users-service
 
 # Expose port 8080
 EXPOSE 8080
 
 # Run the app
-CMD ["./users-service"]
+CMD ["/app/users-service"]

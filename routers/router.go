@@ -2,6 +2,8 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/movierecuh/users-service/handlers"
+	"github.com/movierecuh/users-service/helpers"
 )
 
 func InitRouter() *gin.Engine {
@@ -18,5 +20,15 @@ func InitRouter() *gin.Engine {
 			"message": "pong",
 		})
 	})
+
+	dynamoDBClient := helpers.InitDynamoDBClient()
+	userHandler := handlers.NewUserHandler(dynamoDBClient)
+
+	// Define routes and their corresponding handlers
+	usersGroup.GET("/preferences", userHandler.FetchUserPreference)
+	usersGroup.POST("/preferences", userHandler.SaveUserPreferences)
+
+	usersGroup.GET("/mostAdded", userHandler.FetchMostAdded)
+
 	return router
 }

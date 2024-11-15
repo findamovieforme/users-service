@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/movierecuh/users-service/handlers"
 	"github.com/movierecuh/users-service/helpers"
@@ -8,6 +9,7 @@ import (
 
 func InitRouter() *gin.Engine {
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	usersGroup := router.Group("/users")
 	usersGroup.GET("/", func(c *gin.Context) {

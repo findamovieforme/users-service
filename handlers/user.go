@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -60,6 +61,7 @@ func (h *UserHandler) FetchUserPreference(c *gin.Context) {
 			return
 		}
 		// Handle other errors
+		fmt.Println("Error fetching user preferences:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
@@ -72,6 +74,7 @@ func (h *UserHandler) FetchMostAdded(c *gin.Context) {
 	// Fetch the most added movies
 	mostAddedMovies, err := services.GetMostAddedMovies(h.dynamoDBClient)
 	if err != nil {
+		fmt.Println("Error fetching most added movies:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}

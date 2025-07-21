@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/movierecuh/users-service/helpers"
-	"github.com/movierecuh/users-service/routers"
+	"github.com/findamovieforme/users-service/helpers"
+	"github.com/findamovieforme/users-service/routers"
 )
 
 func main() {

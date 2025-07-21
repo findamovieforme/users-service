@@ -8,8 +8,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/gin-gonic/gin"
-	"github.com/movierecuh/users-service/models"
-	"github.com/movierecuh/users-service/services"
+	"github.com/findamovieforme/users-service/models"
+	"github.com/findamovieforme/users-service/services"
 )
 
 type UserHandler struct {

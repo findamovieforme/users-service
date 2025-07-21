@@ -20,8 +20,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2  # Replace with your AWS region
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1  # Replace with your AWS region
           role-session-name: GitHubActionsSession  # Optional: Name your session
           role-duration-seconds: 1200
 
@@ -32,14 +31,14 @@ jobs:
       # Step 4: Log in to Amazon ECR
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 686255989801.dkr.ecr.us-east-2.amazonaws.com
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 124695120727.dkr.ecr.us-east-1.amazonaws.com
 
       # Step 5: Build and Push Docker Image
       - name: Build and Push Docker Image
         env:
-          ECR_REGISTRY: 686255989801.dkr.ecr.us-east-2.amazonaws.com  # Replace with your ECR registry
-          ECR_REPOSITORY: movierecuh/users-service  # Replace with your ECR repository
-          IMAGE_TAG: latest  # You can use a different tag if needed
+          ECR_REGISTRY: 124695120727.dkr.ecr.us-east-1.amazonaws.com  
+          ECR_REPOSITORY: users-services  
+          IMAGE_TAG: latest
         run: |
           docker buildx build \
             --platform linux/amd64 \
@@ -55,7 +54,7 @@ jobs:
             --service findamovie-users-service \
             --force-new-deployment
         env:
-          AWS_REGION: us-east-2  # Replace with your AWS region
+          AWS_REGION: us-east-1  # Replace with your AWS region
 
       # Step 7: Logout from Amazon ECR (Optional Cleanup)
       - name: Logout from Amazon ECR

@@ -3,8 +3,8 @@ package routers
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/movierecuh/users-service/handlers"
-	"github.com/movierecuh/users-service/helpers"
+	"github.com/findamovieforme/users-service/handlers"
+	"github.com/findamovieforme/users-service/helpers"
 )
 
 func InitRouter() *gin.Engine {

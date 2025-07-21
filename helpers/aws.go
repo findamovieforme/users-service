@@ -8,7 +8,11 @@ import (
 )
 
 func InitDynamoDBClient() *dynamodb.Client {
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-2")) // replace with your region
+	region, err := LoadEnv("AWS_REGION")
+	if err != nil {
+		panic("unable to load SDK config, " + err.Error())
+	}
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
 		panic("unable to load SDK config, " + err.Error())
 	}

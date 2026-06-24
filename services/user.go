@@ -57,43 +57,27 @@ func GetUserPreferences(client *dynamodb.Client, userID string) (*models.UserPre
 	return &userPreferences, nil
 }
 
-func GetMostAddedMovies(client *dynamodb.Client) ([]interface{}, error) {
-	// Aggregate all the users to get the most added movies
-	result, err := client.Scan(context.TODO(), &dynamodb.ScanInput{
-		TableName: aws.String("UserPreferences"),
+func GetMostAddedMovies(client *dynamodb.Client) ([]models.MostAddedMovie, error) {
+	result, err := client.Query(context.TODO(), &dynamodb.QueryInput{
+		TableName:              aws.String("MoviePopularity"),
+		IndexName:              aws.String("PopularityIndex"),
+		KeyConditionExpression: aws.String("#type = :type"),
+		ExpressionAttributeNames: map[string]string{
+			"#type": "type",
+		},
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":type": &types.AttributeValueMemberS{Value: "POPULARITY"},
+		},
+		ScanIndexForward: aws.Bool(false),
+		Limit:            aws.Int32(10),
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
-	// Count the number of times each movie is added
-	movieCount := make(map[float64]int)
-	moiveDetailsMap := make(map[float64]interface{})
-	for _, item := range result.Items {
-		var userPreferences models.UserPreferences
-		err = attributevalue.UnmarshalMap(item, &userPreferences)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, movie := range userPreferences.Preferences {
-			movieMap := movie.(map[string]interface{})
-			movieTitle := movieMap["id"].(float64)
-			movieCount[movieTitle]++
-			moiveDetailsMap[movieTitle] = movieMap
-		}
-	}
-
-	// Find the most added movies
-	var mostAddedMovies []interface{}
-	for movie, count := range movieCount {
-		mostAddedMovies = append(mostAddedMovies, map[string]interface{}{
-			"id":    movie,
-			"count": count,
-			// Return the entire movie object
-			"details": moiveDetailsMap[movie],
-		})
+	var mostAddedMovies []models.MostAddedMovie
+	if err := attributevalue.UnmarshalListOfMaps(result.Items, &mostAddedMovies); err != nil {
+		return nil, err
 	}
 
 	return mostAddedMovies, nil
